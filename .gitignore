@@ -16,6 +16,9 @@ src-tauri/gen
 src-tauri/Cargo.lock
 src-tauri/WixTools
 src-tauri/.cargo
+fanyi.exe
+uninstall.exe
+*.exe
 
 # Editor
 .vscode/*

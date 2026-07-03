@@ -17,6 +17,7 @@ async fn set_clipboard_text(app: tauri::AppHandle, text: String) -> Result<(), S
 }
 
 fn setup_tray(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
+    use tauri::image::Image;
     use tauri::menu::{Menu, MenuItem};
     use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
@@ -24,7 +25,16 @@ fn setup_tray(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let show_i = MenuItem::with_id(app, "show", "打开设置", true, None::<&str>)?;
     let menu = Menu::with_items(app, &[&show_i, &quit_i])?;
 
+    let icon_bytes = include_bytes!("../icons/32x32.png");
+    let img = image::load_from_memory(icon_bytes)
+        .map_err(|e| format!("load tray icon failed: {}", e))?
+        .to_rgba8();
+    let (w, h) = img.dimensions();
+    let tray_icon = Image::new_owned(img.into_raw(), w, h);
+
     TrayIconBuilder::with_id("main-tray")
+        .icon(tray_icon)
+        .icon_as_template(true)
         .menu(&menu)
         .on_menu_event(|app, event| match event.id.as_ref() {
             "quit" => app.exit(0),
