@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-green
 *.local
 src-tauri/target
 src-tauri/gen
@@ -19,6 +20,7 @@ src-tauri/.cargo
 fanyi.exe
 uninstall.exe
 *.exe
+*.zip
 
 # Editor
 .vscode/*
