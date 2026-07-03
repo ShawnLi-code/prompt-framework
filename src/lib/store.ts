@@ -11,6 +11,7 @@ const defaultSettings: AppSettings = {
   selectedTemplateId: defaultTemplate.id,
   customTemplates: [],
   builtInOverrides: {},
+  autoCopyOnDone: false,
 };
 
 let storeInstance: Awaited<ReturnType<typeof load>> | null = null;

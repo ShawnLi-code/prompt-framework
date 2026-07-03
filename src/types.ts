@@ -20,4 +20,5 @@ export interface AppSettings {
   selectedTemplateId: string;
   customTemplates: PromptTemplate[];
   builtInOverrides: Record<string, PromptTemplate>;
+  autoCopyOnDone: boolean;
 }

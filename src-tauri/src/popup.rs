@@ -42,7 +42,7 @@ pub async fn show_popup(app: AppHandle, text: String) -> Result<(), String> {
     }
 
     let popup_w: f64 = 420.0;
-    let popup_h: f64 = 360.0;
+    let popup_h: f64 = 80.0;
 
     let mut x = (mx as f64) - popup_w / 2.0;
     let mut y = (my as f64) + 20.0;
@@ -58,12 +58,13 @@ pub async fn show_popup(app: AppHandle, text: String) -> Result<(), String> {
         WebviewUrl::App("index.html?window=popup".into()),
     )
     .title("提示词框架")
-    .inner_size(popup_w, popup_h)
-    .min_inner_size(360.0, 300.0)
+    .inner_size(popup_w, 80.0)
+    .min_inner_size(360.0, 80.0)
+    .max_inner_size(800.0, 900.0)
     .position(x, y)
-    .decorations(false)
+    .decorations(true)
     .always_on_top(true)
-    .resizable(false)
+    .resizable(true)
     .skip_taskbar(true)
     .focused(true)
     .visible(false)
@@ -74,7 +75,7 @@ pub async fn show_popup(app: AppHandle, text: String) -> Result<(), String> {
     let _ = window.set_focus();
     let _ = window.set_size(tauri::Size::Physical(PhysicalSize::new(
         (popup_w * 1.0) as u32,
-        (popup_h * 1.0) as u32,
+        80,
     )));
     let _ = window.set_position(tauri::Position::Physical(PhysicalPosition::new(
         x as i32,
@@ -83,6 +84,25 @@ pub async fn show_popup(app: AppHandle, text: String) -> Result<(), String> {
 
     let _ = window.emit("popup-text", text);
 
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn resize_popup(app: AppHandle, width: f64, height: f64) -> Result<(), String> {
+    let Some(window) = app.get_webview_window("popup") else { return Ok(()); };
+    let mut w = width.max(360.0).min(800.0);
+    let mut h = height.max(80.0).min(900.0);
+
+    if let Ok(Some(monitor)) = app.primary_monitor() {
+        let s = monitor.size();
+        let sf = monitor.scale_factor();
+        let screen_w = (s.width as f64) / sf;
+        let screen_h = (s.height as f64) / sf;
+        if w > screen_w - 20.0 { w = screen_w - 20.0; }
+        if h > screen_h - 80.0 { h = screen_h - 80.0; }
+    }
+
+    let _ = window.set_size(tauri::Size::Logical(tauri::LogicalSize::new(w, h)));
     Ok(())
 }
 

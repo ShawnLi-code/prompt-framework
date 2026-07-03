@@ -107,6 +107,7 @@ pub fn run() {
             popup::close_popup,
             popup::show_settings_window,
             popup::get_mouse_position,
+            popup::resize_popup,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

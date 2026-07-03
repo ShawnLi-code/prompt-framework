@@ -14,6 +14,7 @@ export default function SettingsPanel({ onClose, embedded = false }: Props) {
   const [apiKey, setApiKey] = useState(store.apiKey);
   const [model, setModel] = useState(store.model);
   const [hotkey, setHotkey] = useState(store.hotkey);
+  const [autoCopyOnDone, setAutoCopyOnDone] = useState(store.autoCopyOnDone);
   const [hotkeyError, setHotkeyError] = useState("");
   const [hotkeyOk, setHotkeyOk] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -45,6 +46,7 @@ export default function SettingsPanel({ onClose, embedded = false }: Props) {
         apiKey,
         model,
         hotkey,
+        autoCopyOnDone,
       });
       onClose();
     } finally {
@@ -138,6 +140,22 @@ export default function SettingsPanel({ onClose, embedded = false }: Props) {
             )}
             <p className="mt-1 text-xs text-gray-400">
               格式示例：Ctrl+Alt+P、Cmd+Shift+T、Alt+Space
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">浮窗行为</h3>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={autoCopyOnDone}
+                onChange={(e) => setAutoCopyOnDone(e.target.checked)}
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">生成完成后自动复制到剪贴板</span>
+            </label>
+            <p className="mt-1 text-xs text-gray-400">
+              开启后，提示词生成完成的瞬间会直接写入剪贴板，可以直接粘贴使用
             </p>
           </section>
 
