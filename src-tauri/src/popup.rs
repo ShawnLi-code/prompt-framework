@@ -1,4 +1,15 @@
-use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, PhysicalSize, WebviewUrl, WebviewWindowBuilder};
+use std::sync::Mutex;
+use tauri::{AppHandle, Manager, PhysicalPosition, PhysicalSize, WebviewUrl, WebviewWindowBuilder};
+
+#[derive(Default)]
+pub struct PendingText(pub Mutex<Option<String>>);
+
+#[tauri::command]
+pub async fn get_popup_text(app: AppHandle) -> Result<Option<String>, String> {
+    let state = app.state::<PendingText>();
+    let mut guard = state.0.lock().map_err(|e| e.to_string())?;
+    Ok(guard.take())
+}
 
 #[tauri::command]
 pub async fn get_mouse_position() -> Result<(i32, i32), String> {
@@ -26,6 +37,12 @@ pub async fn get_mouse_position() -> Result<(i32, i32), String> {
 
 #[tauri::command]
 pub async fn show_popup(app: AppHandle, text: String) -> Result<(), String> {
+    {
+        let state = app.state::<PendingText>();
+        let mut guard = state.0.lock().map_err(|e| e.to_string())?;
+        *guard = Some(text);
+    }
+
     if let Some(window) = app.get_webview_window("popup") {
         let _ = window.close();
     }
@@ -81,8 +98,6 @@ pub async fn show_popup(app: AppHandle, text: String) -> Result<(), String> {
         x as i32,
         y as i32,
     )));
-
-    let _ = window.emit("popup-text", text);
 
     Ok(())
 }

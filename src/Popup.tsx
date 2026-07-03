@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { invoke } from "@tauri-apps/api/core";
 import { Check, Copy, Loader2, Sparkles, X } from "lucide-react";
@@ -41,22 +40,35 @@ function Popup() {
   }, [store.initialized, status]);
 
   useEffect(() => {
-    const unlistenP = listen<string>("popup-text", async (event) => {
-      const text = event.payload || "";
-      setInput(text);
-      setOutput("");
-      setStatus("loading");
-      await new Promise((r) => setTimeout(r, 80));
-      doGenerate(text);
-    });
-    return () => {
-      unlistenP.then((fn) => fn());
+    let cancelled = false;
+    const init = async () => {
+      await store.init();
+      if (cancelled) return;
+      const text = await invoke<string | null>("get_popup_text");
+      if (cancelled) return;
+      if (text !== null && text !== undefined) {
+        setInput(text);
+        doGenerate(text);
+      } else {
+        setInput("");
+      }
     };
-  }, [store.initialized]);
+    init();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const doGenerate = async (text: string) => {
-    if (!text.trim()) return;
-    if (!store.initialized) return;
+    if (!store.initialized) {
+      await store.init();
+    }
+
+    if (!text.trim()) {
+      setOutput("未抓到选中的文字。\n\n请在任意应用中先选中文字，再按 " + store.hotkey + "。");
+      setStatus("error");
+      return;
+    }
 
     const template = store.getTemplate();
     const settings = {
@@ -71,6 +83,12 @@ function Popup() {
       try {
         await invoke("show_settings_window");
       } catch {}
+      return;
+    }
+
+    if (!text.trim()) {
+      setOutput("未抓到选中的文字。请在任意应用中先选中文字，再按快捷键。");
+      setStatus("error");
       return;
     }
 

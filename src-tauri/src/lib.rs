@@ -92,6 +92,7 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
             setup_tray(app)?;
+            app.manage(popup::PendingText::default());
             if let Some(window) = app.get_webview_window("main") {
                 let _ = window.hide();
             }
@@ -108,6 +109,7 @@ pub fn run() {
             popup::show_settings_window,
             popup::get_mouse_position,
             popup::resize_popup,
+            popup::get_popup_text,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
