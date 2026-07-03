@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "fanyi",
+  "productName": "提示词框架",
   "version": "0.1.0",
   "identifier": "com.shawn.fanyi",
   "build": {
@@ -48,7 +48,10 @@
         "languages": ["SimpChinese"],
         "displayLanguageSelector": false,
         "installerIcon": "icons/icon.ico",
-        "installMode": "perMachine"
+        "uninstallerIcon": "icons/icon.ico",
+        "installMode": "perMachine",
+        "startMenuFolder": "提示词框架",
+        "installerHooks": "installer_hooks.nsh"
       }
     }
   }
