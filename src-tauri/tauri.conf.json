@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "fanyi",
+  "version": "0.1.0",
+  "identifier": "com.shawn.fanyi",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "提示词框架 - 设置",
+        "width": 640,
+        "height": 540,
+        "minWidth": 480,
+        "minHeight": 360,
+        "center": true,
+        "visible": false,
+        "skipTaskbar": false
+      }
+    ],
+    "trayIcon": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
+    },
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "publisher": "shawn",
+    "shortDescription": "选中文字，一键生成结构化提示词",
+    "longDescription": "提示词框架是一款轻量级桌面工具，选中文字后通过全局快捷键在鼠标位置弹出小窗，自动用 AI 整理成结构化的提示词。",
+    "windows": {
+      "wix": {
+        "language": "zh-CN"
+      },
+      "nsis": {
+        "languages": ["SimpChinese"],
+        "displayLanguageSelector": false,
+        "installerIcon": "icons/icon.ico",
+        "installMode": "perMachine"
+      }
+    }
+  }
+}
